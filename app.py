@@ -14,7 +14,7 @@ def test():
     return "test!\n"
 
 @app.route('/test/json')
-def test():
+def test_json():
     data = {
         "status":"success",
         "data_type": "detail",
@@ -23,6 +23,10 @@ def test():
         }
     }
     return put_response(data)
+
+@app.route('/')
+def index_html():
+    return open('static/html/index.html').read()
 
 if __name__ == '__main__':
     from bottle import run
