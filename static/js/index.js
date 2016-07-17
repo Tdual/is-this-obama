@@ -64,10 +64,6 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var handleDrageEnter = function handleDrageEnter(e) {
-	  console.log(e);
-	};
-
 	_reactDom2.default.render(_react2.default.createElement(_CommentBox2.default, { url: "/test/comments" }), document.getElementById("app"));
 
 	_reactDom2.default.render(_react2.default.createElement(_Upload2.default, null), document.getElementById("upload"));
@@ -22880,34 +22876,37 @@
 
 	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Upload).call(this, props));
 
-	    var dataUrl = "";
+	    _this.state = {
+	      dataUrl: ""
+	    };
 	    return _this;
 	  }
 
 	  _createClass(Upload, [{
+	    key: "handleChooseFile",
+	    value: function handleChooseFile(file) {
+	      var _this2 = this;
+
+	      var reader = new FileReader();
+	      reader.readAsDataURL(file[0]);
+	      reader.onload = function () {
+	        _this2.setState({ dataUrl: reader.result });
+	      };
+	    }
+	  }, {
 	    key: "render",
 	    value: function render() {
-	      console.log(window.location.origin);
+	      var host = window.location.origin;
 	      var options = {
-	        baseUrl: "http://localhost:8090/upload",
+	        baseUrl: host + "/upload",
 	        param: {
 	          fid: 0
 	        },
-	        chooseFile: function chooseFile(file) {
-	          var _this2 = this;
-
-	          console.log(file);
-	          var reader = new FileReader();
-	          reader.readAsDataURL(file[0]);
-	          reader.onload = function () {
-	            _this2.dataUrl = reader.result;
-	            console.log(_this2.dataUrl);
-	          };
-	        }
+	        chooseFile: this.handleChooseFile.bind(this)
 	      };
 	      return _react2.default.createElement(
 	        _reactFileupload2.default,
-	        { options: options },
+	        { options: options, dataUrl: this.dataUrl },
 	        _react2.default.createElement(
 	          "button",
 	          { ref: "chooseBtn" },
@@ -22917,6 +22916,11 @@
 	          "button",
 	          { ref: "uploadBtn" },
 	          "upload"
+	        ),
+	        _react2.default.createElement(
+	          "div",
+	          null,
+	          _react2.default.createElement("img", { src: this.state.dataUrl, alt: "aaa" })
 	        )
 	      );
 	    }

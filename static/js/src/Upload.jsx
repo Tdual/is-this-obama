@@ -5,29 +5,36 @@ import FileUpload from 'react-fileupload';
 export default class Upload extends React.Component {
   constructor(props) {
     super(props);
-    let dataUrl = "";
+    this.state = {
+      dataUrl: ""
+    };
   }
+
+  handleChooseFile(file){
+    let reader = new FileReader();
+    reader.readAsDataURL(file[0]);
+    reader.onload = () => {
+      this.setState({dataUrl: reader.result})
+    };
+
+  }
+
   render(){
-    console.log(window.location.origin);
+    var host = window.location.origin;
     const options={
-      baseUrl: "http://localhost:8090/upload",
+      baseUrl: `${host}/upload`,
       param:{
         fid:0
       },
-      chooseFile(file){
-        console.log(file);
-        let reader = new FileReader();
-        reader.readAsDataURL(file[0]);
-        reader.onload = () => {
-          this.dataUrl = reader.result;
-          console.log(this.dataUrl);
-        };
-      }
+      chooseFile: this.handleChooseFile.bind(this)
     };
     return (
-       <FileUpload options={options}>
+       <FileUpload options={options} dataUrl={this.dataUrl}>
            <button ref="chooseBtn">choose</button>
            <button ref="uploadBtn">upload</button>
+           <div>
+           <img src={this.state.dataUrl} alt="aaa" />
+           </div>
        </FileUpload>
    );
   }
