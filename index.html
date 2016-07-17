@@ -1,0 +1,119 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>React Tutorial</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.2.1/react.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.2.1/react-dom.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/remarkable/1.6.2/remarkable.min.js"></script>
+</head>
+<body>
+  <div id="content"></div>
+  <script type="text/babel">
+  var data = [];
+  var Comment = React.createClass({
+    rawMarkup: function() {
+    var md = new Remarkable();
+    var rawMarkup = md.render(this.props.children.toString());
+    return { __html: rawMarkup };
+  },
+    render: function() {
+      return (
+        <div className="comment">
+        <span className="commentAuthor">
+        {this.props.author} :
+        </span>
+        <span dangerouslySetInnerHTML={this.rawMarkup()} />
+        </div>
+      );
+    }
+  });
+  var CommentList = React.createClass({
+    render: function() {
+      var commentNodes = this.props.data.map(function (comment) {
+        return (
+          <Comment author={comment.author} key={comment.id}>
+          {comment.text}
+          </Comment>
+        );
+      });
+      return (
+        <div className="commentList">
+        {commentNodes}
+        </div>
+      );
+    }
+  });
+
+  var CommentForm = React.createClass({
+    getInitialState: function() {
+      return {author: '', text: ''};
+    },
+    handleAuthorChange: function(e) {
+      this.setState({author: e.target.value});
+    },
+    handleTextChange: function(e) {
+      this.setState({text: e.target.value});
+    },
+    handleSubmit: function(e) {
+      e.preventDefault();
+      var author = this.state.author.trim();
+      var text = this.state.text.trim();
+      if (!text || !author) {
+        return;
+      }
+      this.props.onCommentSubmit({author: author, text: text});
+      //this.setState({author: '', text: ''});
+    },
+    render: function() {
+      return (
+        <form className="commentForm" onSubmit={this.handleSubmit}>
+        <input
+         type="text"
+         placeholder="Your name"
+         value={this.state.author}
+         onChange={this.handleAuthorChange}
+        />
+        <input
+         type="text"
+         placeholder="Say something..."
+         value={this.state.text}
+         onChange={this.handleTextChange}
+        />
+        <input type="submit" value="Post" />
+       </form>
+      );
+    }
+  });
+
+  var CommentBox = React.createClass({
+    getInitialState: function() {
+      return {data: []};
+    },
+    handleCommentSubmit: function(comment) {
+      console.log(comment);
+      var comments = this.state.data;
+      comment.id = Date.now();
+      var newComments = comments.concat([comment]);
+      this.setState({data: newComments});
+    },
+    render: function() {
+      return (
+        <div className="commentBox">
+        <h1>Comments</h1>
+        <CommentList data={this.state.data} />
+        <CommentForm onCommentSubmit={this.handleCommentSubmit} />
+        </div>
+      );
+    }
+  });
+  ReactDOM.render(
+    <CommentBox data={data} />,
+    document.getElementById('content')
+  );
+  </script>
+</body>
+</html>
