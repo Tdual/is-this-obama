@@ -19,14 +19,16 @@ export default class Upload extends React.Component {
 
   }
 
+  handleUploadSuccess(res){
+    console.log(res);
+  }
+
   render(){
     var host = window.location.origin;
     const options={
       baseUrl: `${host}/upload`,
-      param:{
-        fid:0
-      },
-      chooseFile: this.handleChooseFile.bind(this)
+      chooseFile: this.handleChooseFile.bind(this),
+      uploadSuccess: this.handleUploadSuccess.bind(this)
     };
     return (
        <FileUpload options={options} dataUrl={this.dataUrl}>
