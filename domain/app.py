@@ -2,12 +2,18 @@
 
 from bottle import request, response, static_file
 from bottle import Bottle
+import json
+import os
+import sys
+import hashlib
+
+# sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/domain')
+sys.path.append(os.getcwd() + '/domain')
 
 from response import put_response
 from log import log_debug
-import json
-import os
-import hashlib
+from getface import cutout_face
+
 
 app = Bottle()
 
@@ -53,6 +59,7 @@ def upload_file():
         id = hashlib.sha1(f).hexdigest()
         file.file.seek(0)
         file.save(save_path)
+        cutout_face(save_path,name,save_path)
 
     data = {
         "status":"success",
