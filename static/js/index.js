@@ -22894,15 +22894,18 @@
 	      };
 	    }
 	  }, {
+	    key: "handleUploadSuccess",
+	    value: function handleUploadSuccess(res) {
+	      console.log(res);
+	    }
+	  }, {
 	    key: "render",
 	    value: function render() {
 	      var host = window.location.origin;
 	      var options = {
 	        baseUrl: host + "/upload",
-	        param: {
-	          fid: 0
-	        },
-	        chooseFile: this.handleChooseFile.bind(this)
+	        chooseFile: this.handleChooseFile.bind(this),
+	        uploadSuccess: this.handleUploadSuccess.bind(this)
 	      };
 	      return _react2.default.createElement(
 	        _reactFileupload2.default,

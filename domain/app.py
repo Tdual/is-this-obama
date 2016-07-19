@@ -6,6 +6,8 @@ from bottle import Bottle
 from response import put_response
 from log import log_debug
 import json
+import os
+import hashlib
 
 app = Bottle()
 
@@ -43,7 +45,21 @@ def index_html():
 
 @app.route('/upload', method="POST")
 def upload_file():
-    log_debug("$$$$$$$$$$$$$$$$$")
+    files = request.files
+    params = dict(request.params)
+    save_path = os.path.join(os.getcwd(),"var/tmp")
+    for name, file in files.items():
+        f = file.file.read()
+        id = hashlib.sha1(f).hexdigest()
+        file.file.seek(0)
+        file.save(save_path)
+
+    data = {
+        "status":"success",
+        "data_type": "detail",
+        "detail": {"id": id}
+    }
+    return put_response(data)
 
 @app.route('/static/<file_type>/<file>')
 def read_static(file_type, file):
