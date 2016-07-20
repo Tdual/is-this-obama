@@ -7,12 +7,12 @@ import os
 import sys
 import hashlib
 
-# sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/domain')
 sys.path.append(os.getcwd() + '/domain')
 
 from response import put_response
 from log import log_debug
 from getface import cutout_face
+from prob import get_prob
 
 
 app = Bottle()
@@ -53,10 +53,11 @@ def index_html():
 def upload_file():
     files = request.files
     params = dict(request.params)
-    save_path = os.path.join(os.getcwd(),"var/tmp")
     for name, file in files.items():
         f = file.file.read()
-        id = hashlib.sha1(f).hexdigest()
+        id = hashlib.md5(f).hexdigest()
+        save_path = os.path.join(os.getcwd(), "var/tmp", id)
+        os.mkdir(save_path)
         file.file.seek(0)
         file.save(save_path)
         cutout_face(save_path,name,save_path)
@@ -65,6 +66,25 @@ def upload_file():
         "status":"success",
         "data_type": "detail",
         "detail": {"id": id}
+    }
+    return put_response(data)
+
+@app.route('/images/<image_id>/face', method="GET")
+def get_face(image_id):
+    data = {
+        "status":"success",
+        "data_type": "detail",
+        "detail": {}
+    }
+    return put_response(data)
+
+@app.route('/images/<image_id>/probability', method="GET")
+def get_probability(image_id):
+    prob = get_prob(image_id)[0][0]
+    data = {
+        "status":"success",
+        "data_type": "detail",
+        "detail": {"probability": float(prob)}
     }
     return put_response(data)
 
