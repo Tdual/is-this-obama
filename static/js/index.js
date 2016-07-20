@@ -64,7 +64,12 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	_reactDom2.default.render(_react2.default.createElement(_CommentBox2.default, { url: "/test/comments" }), document.getElementById("app"));
+	/*
+	ReactDOM.render(
+	  <CommentBox url="/test/comments" />,
+	  document.getElementById("app")
+	);
+	*/
 
 	_reactDom2.default.render(_react2.default.createElement(_Upload2.default, null), document.getElementById("upload"));
 
@@ -22860,6 +22865,10 @@
 
 	var _reactFileupload2 = _interopRequireDefault(_reactFileupload);
 
+	var _superagent = __webpack_require__(173);
+
+	var _superagent2 = _interopRequireDefault(_superagent);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -22876,8 +22885,12 @@
 
 	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Upload).call(this, props));
 
+	    _this.apiHost = window.location.origin;
 	    _this.state = {
-	      dataUrl: ""
+	      dataUrl: "",
+	      faceUrl: "",
+	      prob: "",
+	      isObama: false
 	    };
 	    return _this;
 	  }
@@ -22896,14 +22909,31 @@
 	  }, {
 	    key: "handleUploadSuccess",
 	    value: function handleUploadSuccess(res) {
+	      var _this3 = this;
+
 	      console.log(res);
+	      var id = res.id;
+	      if (id) {
+	        var baseUrl = this.apiHost + "/images/" + id;
+	        var rectUrl = baseUrl + "/rectangle";
+	        var probUrl = baseUrl + "/probability";
+	        this.setState({ dataUrl: rectUrl });
+	        _superagent2.default.get(probUrl).end(function (err, res) {
+	          if (err) {
+	            throw err;
+	          }
+	          console.log(res.body);
+	          var prob = res.body.probability;
+	          var isObama = prob > 0.9;
+	          _this3.setState({ prob: prob, isObama: isObama });
+	        });
+	      }
 	    }
 	  }, {
 	    key: "render",
 	    value: function render() {
-	      var host = window.location.origin;
 	      var options = {
-	        baseUrl: host + "/upload",
+	        baseUrl: this.apiHost + "/upload",
 	        chooseFile: this.handleChooseFile.bind(this),
 	        uploadSuccess: this.handleUploadSuccess.bind(this)
 	      };
@@ -22913,17 +22943,28 @@
 	        _react2.default.createElement(
 	          "button",
 	          { ref: "chooseBtn" },
-	          "choose"
+	          "choose a photo"
 	        ),
 	        _react2.default.createElement(
 	          "button",
-	          { ref: "uploadBtn" },
-	          "upload"
+	          { className: this.state.dataUrl ? "show" : "hidden", ref: "uploadBtn" },
+	          "upload a photo"
+	        ),
+	        _react2.default.createElement(
+	          "span",
+	          { className: this.state.prob ? "show" : "hidden" },
+	          "This is ",
+	          this.state.isObama ? "" : "not ",
+	          " Obama!"
 	        ),
 	        _react2.default.createElement(
 	          "div",
 	          null,
-	          _react2.default.createElement("img", { src: this.state.dataUrl, alt: "aaa" })
+	          _react2.default.createElement(
+	            "span",
+	            { className: this.state.dataUrl ? "show" : "hidden" },
+	            _react2.default.createElement("img", { src: this.state.dataUrl, alt: "choosed image" })
+	          )
 	        )
 	      );
 	    }

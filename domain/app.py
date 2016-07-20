@@ -1,18 +1,21 @@
 # -*- coding: utf-8 -*-
 
-from bottle import request, response, static_file
+from bottle import request
 from bottle import Bottle
+
 import json
 import os
 import sys
 import hashlib
+import shutil
 
 sys.path.append(os.getcwd() + '/domain')
 
 from response import put_response
 from log import log_debug
-from getface import cutout_face
+from getface import cutout_face, get_face_image_name
 from prob import get_prob
+
 
 
 app = Bottle()
@@ -35,9 +38,6 @@ def test_json():
 @app.route('/test/comments', method="POST")
 def test_json():
     req = request.json
-    log_debug("########")
-    log_debug(req)
-    log_debug("########")
     data = {
         "status":"success",
         "data_type": "detail",
@@ -52,11 +52,14 @@ def index_html():
 @app.route('/upload', method="POST")
 def upload_file():
     files = request.files
+    id = ""
     params = dict(request.params)
     for name, file in files.items():
         f = file.file.read()
         id = hashlib.md5(f).hexdigest()
         save_path = os.path.join(os.getcwd(), "var/tmp", id)
+        if os.path.isdir(save_path):
+            shutil.rmtree(save_path)
         os.mkdir(save_path)
         file.file.seek(0)
         file.save(save_path)
@@ -71,12 +74,19 @@ def upload_file():
 
 @app.route('/images/<image_id>/face', method="GET")
 def get_face(image_id):
-    data = {
-        "status":"success",
-        "data_type": "detail",
-        "detail": {}
-    }
-    return put_response(data)
+    fullpath = get_face_image_name(image_id)
+    with open(fullpath) as f:
+        image = f.read()
+        # TODO invalid content_type
+    return put_response(image,content_type="image/*")
+
+@app.route('/images/<image_id>/rectangle', method="GET")
+def get_face(image_id):
+    fullpath = get_face_image_name(image_id,type="rect")
+    with open(fullpath) as f:
+        image = f.read()
+        # TODO invalid content_type
+    return put_response(image,content_type="image/*")
 
 @app.route('/images/<image_id>/probability', method="GET")
 def get_probability(image_id):
