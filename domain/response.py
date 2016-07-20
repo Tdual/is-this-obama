@@ -4,7 +4,7 @@ import json
 
 
 def put_response(data, status=200, content_type="application/json"):
-    if content_type == "image/gif":
+    if content_type == "image/*":
         data = data
         res = HTTPResponse(body=data, status=status)
         res.set_header('Content-Type', content_type)
