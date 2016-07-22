@@ -21,11 +21,42 @@ nginx + uwsgi
 
 
 
-
-
 ## memo
+### data structure between router(app.py) and domain
+#### success
+```
+ {
+   "status":"success",
+   "data_type": "detail",
+   "detail": <detail data: dict>
+ }
+ ```
+ #### error
+ ```
+ {
+   "status:"error",
+   "message": <error message: str>
+   "status": <http status: str>
+}
+ ```
+### example of API response
+#### upload success
+```
+ {
+   "id":"afsgsrdgrsdhsrh",
+   "name": "test.jpeg"
+ }
+ ```
+ #### error
+ ```
+ {
+   "error": {
+     "message": "can not recognize face"
+   }
+}
+ ```
 
-setting js (react + eslint + webpack )
+### setting js (react + eslint + webpack )
 ```
 npm install --save react react-dom
 npm install -g eslint
