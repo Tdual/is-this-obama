@@ -2,3 +2,4 @@ var/log/error.log
 *.pyc
 .DS_Store
 node_modules/
+static/js/index.js

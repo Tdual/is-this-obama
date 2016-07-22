@@ -1,10 +1,9 @@
 import React from "react";
-import FileUpload from 'react-fileupload';
+import Dropzone from 'react-dropzone';
 import request from "superagent";
 
-
 export default class Upload extends React.Component {
-  constructor(props) {
+  constructor(props){
     super(props);
     this.apiHost = window.location.origin;
     this.state = {
@@ -15,55 +14,56 @@ export default class Upload extends React.Component {
     };
   }
 
-  handleChooseFile(file){
-    let reader = new FileReader();
-    reader.readAsDataURL(file[0]);
-    reader.onload = () => {
-      this.setState({dataUrl: reader.result})
-    };
-
-  }
-
-  handleUploadSuccess(res){
-    console.log(res);
+  callbackUploadSuccess(data){
+    let res = data.body;
     let id = res.id;
     if(id){
-      let baseUrl = `${this.apiHost}/images/${id}`;
-      let rectUrl = `${baseUrl}/rectangle`;
-      let probUrl = `${baseUrl}/probability`;
-      this.setState({dataUrl: rectUrl});
-      request.get(probUrl)
-        .end((err, res) => {
-          if (err) {
-            throw err;
-          }
-          console.log(res.body);
-          let prob = res.body.probability;
-          let isObama = prob > 0.9;
-          this.setState({prob,isObama});
-        });
+      this.getProb(id);
     }
   }
 
-  render(){
-    const options={
-      baseUrl: `${this.apiHost}/upload`,
-      chooseFile: this.handleChooseFile.bind(this),
-      uploadSuccess: this.handleUploadSuccess.bind(this)
-    };
+  callbackGetProbSuccess(data){
+    let prob = data.body.probability;
+    let isObama = prob > 0.9;
+    this.setState({prob,isObama});
+  }
+
+  getProb(id){
+    let baseUrl = `/images/${id}`;
+    let rectUrl = `${baseUrl}/rectangle`;
+    let probUrl = `${baseUrl}/probability`;
+    this.setState({dataUrl: rectUrl});
+    let req = request.get(probUrl);
+    req.then(this.callbackGetProbSuccess.bind(this));
+  }
+
+  onDrop(files) {
+    let file = files[0];
+    let uploadUrl = "/upload";
+    let req = request.post(uploadUrl);
+    req.attach(file.name, file);
+    req.then(this.callbackUploadSuccess.bind(this));
+  }
+
+  render() {
     return (
-       <FileUpload options={options} dataUrl={this.dataUrl}>
-           <button ref="chooseBtn">choose a photo</button>
-           <button className={this.state.dataUrl ? "show" : "hidden"} ref="uploadBtn">upload a photo</button>
+          <div>
+            <Dropzone
+              onDrop={this.onDrop.bind(this)}
+              accept="image/gif,image/jpeg,image/png,image/jpg"
+              multiple = {false}
+            >
+              <div>drop some files here, or click to select file to upload.</div>
+            </Dropzone>
            <span className={this.state.prob? "show":"hidden"}>
-             This is {this.state.isObama? "":"not " } Obama!
+             This is {this.state.isObama? "":"not " } Obama!(Obama's face rate: {this.state.prob*100} %)
            </span>
            <div>
            <span className={this.state.dataUrl ? "show" : "hidden"}>
              <img src={this.state.dataUrl} alt="choosed image" />
            </span>
            </div>
-       </FileUpload>
-   );
+          </div>
+      );
   }
 }
