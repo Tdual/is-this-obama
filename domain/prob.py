@@ -13,9 +13,6 @@ def get_prob(image_id):
     c = CNN()
 
     image_name = get_face_image_name(image_id)
-    log_debug("#############")
-    log_debug(image_name)
-    log_debug("#############")
     cv_image = cv2.imread(image_name)
     image = c.shape_CVimage(cv_image)
 
@@ -28,4 +25,10 @@ def get_prob(image_id):
         prob = sess.run(softmax, feed_dict={
             images_placeholder: [image],
             keep_prob: 1.0})
-        return prob
+    res_prob = prob[0][0]
+    data = {
+        "status":"success",
+        "data_type": "detail",
+        "detail": {"probability": float(res_prob)}
+    }
+    return data
