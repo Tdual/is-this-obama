@@ -12,12 +12,13 @@ sys.path.append(os.getcwd() + '/domain')
 from response import put_response
 from log import log_debug
 from getface import cutout_face, get_face_image_name
-from prob import get_prob
+from prob import Prob
 import filemanager
 
 
 
 app = Bottle()
+prob = Prob()
 
 @app.route('/test')
 def test():
@@ -52,6 +53,11 @@ def index_html():
 def upload_file():
     files = request.files
     res = filemanager.upload_file(files)
+    if res["status"] == "success":
+        name = res["detail"]["name"]
+        id = res["detail"]["id"]
+        save_path = filemanager.get_save_path(id)
+        cutout_face(save_path,name,save_path)
     return put_response(res)
 
 @app.route('/images/<image_id>/face', method="GET")
@@ -72,7 +78,7 @@ def get_face(image_id):
 
 @app.route('/images/<image_id>/probability', method="GET")
 def get_probability(image_id):
-    res = get_prob(image_id)
+    res = prob.get_prob(image_id)
     return put_response(res)
 
 @app.route('/static/<file_type>/<file>')

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import cv2
 import os
+from filemanager import get_save_path
 
 def cutout_face(image_path, image_name, dist_path, rectangle=True):
     image = cv2.imread(image_path+"/"+image_name)
@@ -33,10 +34,13 @@ def get_face_image_name(image_id, type="face"):
     return: fullpath name
     """
     prefix = type + "_"
-    path = os.path.join(os.getcwd(), "var/tmp", image_id)
-    image_list = os.listdir(path)
-    for img in image_list:
-        if prefix in img:
-            name = img
-            break
-    return os.path.join(path,name)
+    path = get_save_path(image_id)
+    if path:
+        image_list = os.listdir(path)
+        for img in image_list:
+            if prefix in img:
+                name = img
+                break
+        return os.path.join(path,name)
+    else:
+        return None
