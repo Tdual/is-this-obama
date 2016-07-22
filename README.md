@@ -6,12 +6,20 @@ this web site judges whether a uploded photo is Obama or not. the judge mechanis
 
 ## development environment
 
-#### language
+#### deep learning info
+language: python   
+frame work: tensorflow  
+type: CNN  
+training data set: obama:120, non obama:120(search for a actor)  
+
+#### web site language
 server: python (FM: bottle)  
 frontend: JS (FM: React)
 
 #### server environment
 nginx + uwsgi
+
+
 
 
 
