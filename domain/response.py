@@ -12,7 +12,16 @@ def put_response(data, status=200, content_type="application/json"):
     elif data["status"] == "error":
         if status == 200:
             status = 500
-        body = {"error":{"message": data["message"]}}
+        if "http_status" in data and data["http_status"]:
+            status = data["http_status"]
+        with open("etc/errorMapping.json","r") as f:
+            mapping_json = json.load(f)
+            if "code" in data:
+                code = data["code"]
+            else:
+                code = 0
+            message = mapping_json[str(code)]
+        body = {"error":{"message": message, "code":code}}
         res = HTTPResponse(body=body, status=status)
         res.set_header('Content-Type', 'application/json')
         res.set_header('Access-Control-Allow-Origin', '*')

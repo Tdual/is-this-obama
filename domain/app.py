@@ -20,31 +20,6 @@ import filemanager
 app = Bottle()
 prob = Prob()
 
-@app.route('/test')
-def test():
-    return "test!\n"
-
-@app.route('/test/json')
-def test_json():
-    data = {
-        "status":"success",
-        "data_type": "detail",
-        "detail":{
-          "message":"test!",
-        }
-    }
-    return put_response(data)
-
-@app.route('/test/comments', method="POST")
-def test_json():
-    req = request.json
-    data = {
-        "status":"success",
-        "data_type": "detail",
-        "detail": req
-    }
-    return put_response(data)
-
 @app.route('/')
 def index_html():
     return open('static/html/index.html').read()
@@ -57,7 +32,9 @@ def upload_file():
         name = res["detail"]["name"]
         id = res["detail"]["id"]
         save_path = filemanager.get_save_path(id)
-        cutout_face(save_path,name,save_path)
+        cutout_res = cutout_face(save_path,name,save_path)
+        if cutout_res["status"] == "error":
+            return put_response(cutout_res)
     return put_response(res)
 
 @app.route('/images/<image_id>/face', method="GET")
@@ -69,7 +46,7 @@ def get_face(image_id):
     return put_response(image,content_type="image/*")
 
 @app.route('/images/<image_id>/rectangle', method="GET")
-def get_face(image_id):
+def get_rectangle(image_id):
     fullpath = get_face_image_name(image_id,type="rect")
     with open(fullpath) as f:
         image = f.read()

@@ -27,6 +27,13 @@ def cutout_face(image_path, image_name, dist_path, rectangle=True):
                         tuple(rect[0:2] + rect[2:4]), color, thickness=2)
             new_rect_path = dist_path + '/' +'rect_' + image_name;
             cv2.imwrite(new_rect_path, image)
+        return {"status":"success","data_type":"detail","detail":""}
+    else:
+        return {
+            "status": "error",
+            "code": 1,
+            "http_status": 400
+            }
 
 def get_face_image_name(image_id, type="face"):
     u"""

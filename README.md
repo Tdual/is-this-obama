@@ -35,15 +35,15 @@ nginx + uwsgi
  ```
  {
    "status:"error",
-   "message": <error message: str>
-   "status": <http status: str>
+   "code": <error code: int>
+   "http_status": <http status: str>
 }
  ```
 ### example of API response
 #### upload success
 ```
  {
-   "id":"afsgsrdgrsdhsrh",
+   "id": "afsgsrdgrsdhsrh",
    "name": "test.jpeg"
  }
  ```
@@ -51,7 +51,8 @@ nginx + uwsgi
  ```
  {
    "error": {
-     "message": "can not recognize face"
+     "code": 1
+     "message": "can not recognize a face"
    }
 }
  ```

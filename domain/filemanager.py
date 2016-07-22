@@ -28,7 +28,8 @@ def upload_file(files):
     else:
         res = {
             "status": "error",
-            "message":"can not get a valid id"
+            "http_status": 500,
+            "code": 2
         }
     return res
 
