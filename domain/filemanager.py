@@ -6,12 +6,25 @@ import shutil
 import hashlib
 
 def upload_file(files):
+    allow_file = ["jpeg","png","jpg","JPEG","JPG","PNG"]
     u"""
     upload file (non multiple finles)
 
     """
     id = ""
     for name, file in files.items():
+        error_res = {
+            "status": "error",
+            "http_status": 400,
+            "code": 3
+        }
+        try:
+            ext = name.split(".")[1]
+            if not ext in allow_file:
+                return error_res
+        except:
+            return error_res
+
         f = file.file.read()
         id = hashlib.md5(f).hexdigest()
         save_path = get_save_path(id)

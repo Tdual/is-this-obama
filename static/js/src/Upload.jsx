@@ -8,21 +8,29 @@ export default class Upload extends React.Component {
     this.apiHost = window.location.origin;
     this.state = {
       dataUrl: "",
-      faceUrl: "",
       prob: "",
-      isObama: false
+      isObama: false,
+      errorMessage: ""
     };
   }
 
-  callbackUploadSuccess(data){
+  callbackUpload(err, data){
     let res = data.body;
-    let id = res.id;
-    if(id){
-      this.getProb(id);
+    if(err) {
+      let error = data.body.error;
+      this.setState({
+        //dataUrl:"",
+        errorMessage: error.message
+      });
+    }else{
+      let id = res.id;
+      if(id){
+        this.getProb(id);
+      }
     }
   }
 
-  callbackGetProbSuccess(data){
+  callbackGetProbSuccess(err, data){
     let prob = data.body.probability;
     let isObama = prob > 0.9;
     this.setState({prob,isObama});
@@ -34,15 +42,24 @@ export default class Upload extends React.Component {
     let probUrl = `${baseUrl}/probability`;
     this.setState({dataUrl: rectUrl});
     let req = request.get(probUrl);
-    req.then(this.callbackGetProbSuccess.bind(this));
+    req.end(this.callbackGetProbSuccess.bind(this));
   }
 
   onDrop(files) {
+    this.setState({
+      errorMessage:"",
+      prob: 0
+    });
     let file = files[0];
+    var reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      this.setState({ dataUrl: reader.result });
+    };
     let uploadUrl = "/upload";
     let req = request.post(uploadUrl);
     req.attach(file.name, file);
-    req.then(this.callbackUploadSuccess.bind(this));
+    req.end(this.callbackUpload.bind(this));
   }
 
   render() {
@@ -50,13 +67,16 @@ export default class Upload extends React.Component {
           <div>
             <Dropzone
               onDrop={this.onDrop.bind(this)}
-              accept="image/gif,image/jpeg,image/png,image/jpg"
+              accept="image/gif, image/jpeg,image/png,image/jpg"
               multiple = {false}
             >
               <div>drop some files here, or click to select file to upload.</div>
             </Dropzone>
-           <span className={this.state.prob? "show":"hidden"}>
-             This is {this.state.isObama? "":"not " } Obama!(Obama's face rate: {this.state.prob*100} %)
+           <span className={this.state.prob && !this.state.errorMessage? "show":"hidden"}>
+             This is {this.state.isObama? "":"not " } Obama! (Obama's face rate: {this.state.prob*100} %)
+           </span>
+           <span className={this.state.errorMessage? "errorMessage show":"hidden"}>
+             {this.state.errorMessage}
            </span>
            <div>
            <span className={this.state.dataUrl ? "show" : "hidden"}>
