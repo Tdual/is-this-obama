@@ -19,7 +19,7 @@ def upload_file(files):
             "code": 3
         }
         try:
-            ext = name.split(".")[1]
+            ext = name.split(".")[-1]
             if not ext in allow_file:
                 return error_res
         except:

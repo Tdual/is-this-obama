@@ -156,10 +156,10 @@ class CNN(object):
                 label_list.append(tmp)
         return img_list, label_list, image_name_list
 
-    def shape_CVimage(self, cv_image, image_size=None):
+    def shape_CVimage(self, CVimage, image_size=None):
         if not image_size:
             image_size = self.IMAGE_SIZE
-        resize_img = cv2.resize(cv_image, (image_size, image_size))
+        resize_img = cv2.resize(CVimage, (image_size, image_size))
         result_img = resize_img.flatten().astype(np.float32)/255.0
         return result_img
 

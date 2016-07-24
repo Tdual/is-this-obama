@@ -11,7 +11,7 @@ sys.path.append(os.getcwd() + '/domain')
 
 from response import put_response
 from log import log_debug
-from getface import cutout_face, get_face_image_name
+from getface import cutout_face, get_face_image_name, circumscribe_face
 from prob import Prob
 import filemanager
 
@@ -35,6 +35,9 @@ def upload_file():
         cutout_res = cutout_face(save_path,name,save_path)
         if cutout_res["status"] == "error":
             return put_response(cutout_res)
+        circum_res = circumscribe_face(save_path,name,save_path)
+        if circum_res["status"] == "error":
+            return put_response(circum_res)
     return put_response(res)
 
 @app.route('/images/<image_id>/face', method="GET")
