@@ -60,7 +60,15 @@ def get_probability(image_id):
 
 @app.route('/static/<file_type>/<file>')
 def read_static(file_type, file):
-    return open('static/'+file_type+'/'+file).read()
+    if file_type == "js":
+        content_type = "text/javascript"
+    elif file_type == "css":
+        content_type = "text/css"
+    else:
+        content_type = "text/html"
+    with open('static/'+file_type+'/'+file) as f:
+        data = f.read()
+    return put_response(data=data, content_type=content_type)
 
 if __name__ == '__main__':
     from bottle import run

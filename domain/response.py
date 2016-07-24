@@ -4,7 +4,10 @@ import json
 
 
 def put_response(data, status=200, content_type="application/json"):
-    if content_type == "image/*":
+    if content_type == "image/*" or \
+        content_type == "text/javascript" or \
+        content_type == "text/css":
+
         data = data
         res = HTTPResponse(body=data, status=status)
         res.set_header('Content-Type', content_type)
