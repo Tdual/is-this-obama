@@ -42,19 +42,23 @@ def upload_file():
 
 @app.route('/images/<image_id>/face', method="GET")
 def get_face(image_id):
+    u"""
+    only one person's face
+
+    """
     fullpath = get_face_image_name(image_id)
     with open(fullpath) as f:
         image = f.read()
-        # TODO invalid content_type
-    return put_response(image,content_type="image/*")
+    content_type = filemanager.get_content_type(fullpath)
+    return put_response(image,content_type=content_type)
 
 @app.route('/images/<image_id>/rectangle', method="GET")
 def get_rectangle(image_id):
     fullpath = get_face_image_name(image_id,type="rect")
     with open(fullpath) as f:
         image = f.read()
-        # TODO invalid content_type
-    return put_response(image,content_type="image/*")
+    content_type = filemanager.get_content_type(fullpath)
+    return put_response(image,content_type=content_type)
 
 @app.route('/images/<image_id>/probability', method="GET")
 def get_probability(image_id):

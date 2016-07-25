@@ -4,7 +4,7 @@ import json
 
 
 def put_response(data, status=200, content_type="application/json"):
-    if content_type == "image/*" or \
+    if "image/" in content_type or \
         content_type == "text/javascript" or \
         content_type == "text/css":
 

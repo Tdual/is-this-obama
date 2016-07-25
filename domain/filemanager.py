@@ -54,3 +54,10 @@ def remove_save_path(id):
     save_path = get_save_path(id)
     if os.path.isdir(save_path):
         shutil.rmtree(save_path)
+
+def get_content_type(name):
+    ext = name.split(".")[-1].lower()
+    if ext == "jpg":
+        ext = "jpeg"
+    content_type = "image/"+ext
+    return content_type
