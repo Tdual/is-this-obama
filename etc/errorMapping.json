@@ -1,0 +1,6 @@
+{
+  "0" :"unknown error",
+  "1": "can not recognize a face",
+  "2": "can not get a valid id",
+  "3": "can not upload invalid file (only png, jpeg, jpg)"
+}

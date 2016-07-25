@@ -1,0 +1,14 @@
+.hidden {
+  visibility:hidden;
+}
+
+.show {
+  overflow: hidden;
+  display: inline-block;
+}
+
+.errorMessage {
+  background-color: rgb(255, 0, 0);
+  color: rgb(255, 255, 255);
+  padding : 0px 10px;
+}
