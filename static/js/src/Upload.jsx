@@ -30,10 +30,26 @@ export default class Upload extends React.Component {
     }
   }
 
-  callbackGetProbSuccess(err, data){
-    let prob = data.body.probability;
+  callbackGetProb(err, data){
+    let probs  = data.body.probability;
+    let max = 0;
+    let maxKey = 0;
+    let pKeys = Object.keys(probs);
+    for (let k in pKeys){
+      if(max < probs[k]){
+        max = probs[k];
+        maxKey = k;
+      }
+    }
+    this.changeImage(maxKey);
+    let prob = max;
     let isObama = prob > 0.9;
     this.setState({prob,isObama});
+  }
+
+  changeImage(maxKey){
+    let url = `${this.state.dataUrl}/indiviual/${maxKey}`;
+    this.setState({ dataUrl: url });
   }
 
   getProb(id){
@@ -42,7 +58,7 @@ export default class Upload extends React.Component {
     let probUrl = `${baseUrl}/probability`;
     this.setState({dataUrl: rectUrl});
     let req = request.get(probUrl);
-    req.end(this.callbackGetProbSuccess.bind(this));
+    req.end(this.callbackGetProb.bind(this));
   }
 
   onDrop(files) {
