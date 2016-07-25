@@ -3,3 +3,6 @@ var/log/error.log
 .DS_Store
 node_modules/
 static/js/index.js
+var/tmp/*
+domain/model.ckpt.meta
+opencv-3.1.0/
