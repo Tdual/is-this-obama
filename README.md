@@ -1,7 +1,7 @@
 # is-this-obama
 
 ## demo site
-http://ec2-52-197-99-113.ap-northeast-1.compute.amazonaws.com/
+http://is-this-obama.com/
 
 ## description
 this web site judges whether a uploded photo is Obama or not. the judge mechanism is the deep learning(CNN).
