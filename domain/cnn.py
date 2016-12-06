@@ -140,10 +140,11 @@ class CNN(object):
             for img_name in os.listdir(folder):
                 img_path = os.getcwd() + "/"+folder+"/"
                 fullpath = img_path + img_name
-
+                print fullpath
                 image_name_list.append(fullpath)
 
                 jpeg_r = tf.read_file(fullpath)
+                print jpeg_r
                 image = tf.image.decode_jpeg(jpeg_r)
                 resized_img = tf.image.resize_images(image, image_size, image_size)
                 reshaped_img = tf.reshape(resized_img,[-1])
