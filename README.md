@@ -63,12 +63,14 @@ nginx + uwsgi
 ### settings
 js (react + eslint + webpack )
 ```
+sudo ln -fs /usr/bin/nodejs /usr/local/bin/node
 npm install --save react react-dom
 npm install -g eslint
 eslint --init
 npm install --save-dev webpack babel-loader babel-core babel-preset-react babel-preset-es2015
+npm install superagent
 
-sudo ln -fs /usr/bin/nodejs /usr/local/bin/node
+
 ```
 
 ```
@@ -123,4 +125,9 @@ change app's path in uwsgi.ini
 sudo mkdir /var/run/uwsgi/
 sudo touch /var/run/uwsgi/app.pid
 sudo uwsgi uwsgi.ini
+```
+
+build js
+```
+webpack
 ```
