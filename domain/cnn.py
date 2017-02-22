@@ -91,8 +91,8 @@ class CNN(object):
         :param labels: tensor of labels, int32 - [batch_size, NUM_CLASSES]
         :return: cross entropy
         """
-        cross_entropy = -tf.reduce_sum(labels*tf.log(softmax))
-        tf.scalar_summary("cross_entropy", cross_entropy)
+        cross_entropy = -tf.reduce_sum(labels*tf.log(tf.clip_by_value(softmax,1e-10,1.0)))
+        tf.summary.scalar("cross_entropy", cross_entropy)
         return cross_entropy
 
     def training(self, loss, learning_rate):
@@ -103,7 +103,6 @@ class CNN(object):
         :param learning_rate: learning rate
         :return: Op of training
         """
-        print "training"
         train_step = tf.train.AdamOptimizer(learning_rate).minimize(loss)
         return train_step
 
@@ -117,7 +116,7 @@ class CNN(object):
         """
         correct_prediction = tf.equal(tf.argmax(softmax, 1), tf.argmax(labels, 1))
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
-        tf.scalar_summary("accuracy", accuracy)
+        tf.summary.scalar("accuracy", accuracy)
         return accuracy
 
     def read_image(self, data_list, image_size=None):
