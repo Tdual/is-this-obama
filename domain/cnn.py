@@ -91,7 +91,7 @@ class CNN(object):
         :param labels: tensor of labels, int32 - [batch_size, NUM_CLASSES]
         :return: cross entropy
         """
-        cross_entropy = -tf.reduce_sum(labels*tf.log(tf.clip_by_value(softmax,1e-10,1.0)))
+        cross_entropy = -tf.reduce_sum(labels*tf.log(tf.clip_by_value(softmax,1e-10,1e+10)))
         tf.summary.scalar("cross_entropy", cross_entropy)
         return cross_entropy
 
