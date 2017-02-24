@@ -30,7 +30,11 @@ class Prob(object):
             CVimage = cv2.imread(save_path+"/"+image_name)
             image = self.c.shape_CVimage(CVimage)
             with tf.Session() as sess:
-                self.saver.restore(sess, "/root/share/domain/model.ckpt")
+                ckpt = tf.train.get_checkpoint_state('./')
+                if ckpt: # checkpointがある場合
+                    last_model = ckpt.model_checkpoint_path # 最後に保存したmodelへのパス
+                    self.saver.restore(sess, last_model) # 変数データの読み込み
+                #self.saver.restore(sess, "/root/share/domain/model.ckpt")
                 prob = sess.run(self.softmax, feed_dict={
                     self.images_placeholder: [image],
                     self.keep_prob: 1.0

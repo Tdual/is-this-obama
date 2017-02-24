@@ -14,6 +14,7 @@ from log import log_debug
 from getface import cutout_face, get_face_image_name, circumscribe_face
 from prob import Prob
 import filemanager
+html_path = "../static/html/"
 
 
 
@@ -22,7 +23,7 @@ prob = Prob()
 
 @app.route('/')
 def index_html():
-    return open('static/html/index.html').read()
+    return open(html_path+'index.html').read()
 
 @app.route('/upload', method="POST")
 def upload_file():
@@ -82,13 +83,13 @@ def read_static(file_type, file):
         content_type = "text/css"
     else:
         content_type = "text/html"
-    with open('static/'+file_type+'/'+file) as f:
+    with open('../static/'+file_type+'/'+file) as f:
         data = f.read()
     return put_response(data=data, content_type=content_type)
 
 if __name__ == '__main__':
     from bottle import run
-    app.run(host="0.0.0.0", port=8080)
+    app.run(host="0.0.0.0", port=8081)
 else:
     log_debug("uwsgi")
     application = app

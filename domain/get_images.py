@@ -8,6 +8,7 @@ from PIL import Image
 from StringIO import StringIO
 import random
 import os
+import json
 
 
 def get_images_sync(q):
@@ -25,21 +26,25 @@ def get_images_sync(q):
     return len(img_tags)
 
 def get_image_async(q, first, folder):
-    url = 'http://www.bing.com/images/async?q='+q+'&async=content&first='+str(first)+'1&IID=images.1'
+    url = 'http://www.bing.com/images/async?q='+q+'&async=content&first='+str(first)+'&IID=images.1'
     res = requests.get(url)
     html = res.text
     soup = BeautifulSoup(html, "html.parser")
     img_tags = soup.find_all("a")
-    for i, a in enumerate(img_tags):
-        id = a.get("ihk")
-        if id:
-            host_num = random.randint(1,4)
-            image_url = "http://tse"+str(host_num)+".mm.bing.net/th?id="+id
+    total = 0
+    for a in img_tags:
+        m =  a.get("mad")
+        if m:
+            m_json = json.loads(m)
+            image_url = m_json.get("turl")
+            print image_url
             img = requests.get(image_url)
             if img.content:
                 j = Image.open(StringIO(img.content)) 
-                j.save(folder + "/img"+str(i+first)+".jpeg")
-    return len(img_tags)
+                j.save(folder + "/img"+str(total+first)+".jpeg")
+                total = total + 1
+
+    return total 
 
 
 
@@ -57,6 +62,7 @@ if __name__ == '__main__':
         req_total = int(params[2])
         first = 0
         folder = os.getcwd() + "/image"
+        print("folder's path:{}".format(folder))
 
         total = first
         while total < req_total:
